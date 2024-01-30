@@ -1,4 +1,4 @@
 // apiConfig.js
-const API_URL = 'https://coin-kappa-three.vercel.app';
+const API_URL = 'https://coin-7zcc.vercel.app';
 
 export default API_URL;
