@@ -9,7 +9,8 @@ var corsOptions = {
   optionsSuccessStatus: 200 // some legacy browsers (IE11, various SmartTVs) choke on 204
 }
 
-app.use(cors(corsOptions));app.use(express.json()); // for parsing application/json
+app.use(cors(corsOptions));
+app.use(express.json()); // for parsing application/json
 
 // Connect to MongoDB
 mongoose.connect('mongodb+srv://jinxforever8341:5Pnd3AUHYTrdh41v@cluster0.yxs991t.mongodb.net/', {useNewUrlParser: true, useUnifiedTopology: true});
