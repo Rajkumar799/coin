@@ -5,11 +5,13 @@ const cors = require('cors');
 const jwt = require('jsonwebtoken');
 
 var corsOptions = {
-  origin: 'https://coin-bldf.vercel.app/',
-  optionsSuccessStatus: 200 // some legacy browsers (IE11, various SmartTVs) choke on 204
+  origin: 'https://coin-bldf.vercel.app',
+  optionsSuccessStatus: 200,
+  credentials: true
 }
 
-app.use(cors(corsOptions));
+
+app.options('*', cors(corsOptions));
 
 app.use(express.json()); // for parsing application/json
 
