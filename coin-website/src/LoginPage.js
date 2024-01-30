@@ -2,10 +2,12 @@ import React, { useState } from 'react';
 import axios from 'axios';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import API_URL from './apiConfig'; // Adjust the path based on your project structure
+import { useNavigate } from 'react-router-dom'; // Import useNavigate
 
 function LoginPage() {
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
+  const navigate = useNavigate(); // Create a navigate object
 
   const login = async () => {
     try {
@@ -13,6 +15,8 @@ function LoginPage() {
       const { user, token } = response.data;
       console.log(user);
       localStorage.setItem('token', token);
+            navigate('/'); // Navigate to homepage
+
     } catch (error) {
       console.error(error);
     }
