@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import axios from 'axios';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import API_URL from './apiConfig'; // Adjust the path based on your project structure
+import { useNavigate } from 'react-router-dom'; // Import useNavigate
 
 function RegistrationPage() {
   const [username, setUsername] = useState('');
@@ -9,11 +10,14 @@ function RegistrationPage() {
   const [referCode, setReferCode] = useState('');
   const [mobileNumber, setMobileNumber] = useState('');
   const [email, setEmail] = useState('');
+  const navigate = useNavigate(); // Create a navigate object
 
   const register = async () => {
     try {
       const response = await axios.post(`${API_URL}/register`, { username, password, referCode, mobileNumber, email });
       console.log(response.data);
+            navigate('/login'); // Navigate to homepage
+
     } catch (error) {
       console.error(error);
     }
