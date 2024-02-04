@@ -3,7 +3,7 @@ const app = express();
 const mongoose = require('mongoose');
 const cors = require('cors');
 const jwt = require('jsonwebtoken');
-const cron = require('node-cron');  // Add this line to include the 'node-cron' library
+// const cron = require('node-cron');  // Add this line to include the 'node-cron' library
 
 var corsOptions = {
   origin: 'https://coin-ecdw.vercel.app',
