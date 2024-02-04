@@ -213,7 +213,7 @@ app.post('/register', async (req, res) => {
       await referrer.save();
     }
   }
-  }
+  // }
   res.send(user);
 });
 
