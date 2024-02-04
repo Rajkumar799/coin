@@ -3,7 +3,7 @@ const app = express();
 const mongoose = require('mongoose');
 const cors = require('cors');
 const jwt = require('jsonwebtoken');
-// const cron = require('node-cron');  // Add this line to include the 'node-cron' library
+const cron = require('node-cron');  // Add this line to include the 'node-cron' library
 
 var corsOptions = {
   origin: 'https://coin-ecdw.vercel.app',
@@ -92,14 +92,14 @@ const TransactionMethodSchema = new mongoose.Schema({
   usdtDetails: String,
   referralCommission: Number
 });
-// const adminSchema = new mongoose.Schema({
-//   username: String,
-//   email: String,
-//   password: String,
-// });
+const adminSchema = new mongoose.Schema({
+  username: String,
+  email: String,
+  password: String,
+});
 
-// // Create Admin model
-// const Admin = mongoose.model('Admin', adminSchema);
+// Create Admin model
+const Admin = mongoose.model('Admin', adminSchema);
 const TransactionMethod = mongoose.model('TransactionMethod', TransactionMethodSchema);
 
 const UserTransaction = mongoose.model('Transaction', UserTransactionSchema);
@@ -130,60 +130,60 @@ const User = mongoose.model('User', UserSchema);
 // });
 // Registration route
 // Get all admins
-// app.get('/admin/admins', async (req, res) => {
-//   try {
-//     const admins = await Admin.find();
-//     res.json(admins);
-//   } catch (error) {
-//     res.status(500).json({ error: 'Internal Server Error' });
-//   }
-// });
+app.get('/admin/admins', async (req, res) => {
+  try {
+    const admins = await Admin.find();
+    res.json(admins);
+  } catch (error) {
+    res.status(500).json({ error: 'Internal Server Error' });
+  }
+});
 
 // // Add new admin
-// app.post('/admin/admins', async (req, res) => {
-//   const { username, email, password } = req.body;
+app.post('/admin/admins', async (req, res) => {
+  const { username, email, password } = req.body;
 
-//   try {
-//     const newAdmin = new Admin({ username, email, password });
-//     await newAdmin.save();
-//     res.status(201).json(newAdmin);
-//   } catch (error) {
-//     res.status(500).json({ error: 'Internal Server Error' });
-//   }
-// });
+  try {
+    const newAdmin = new Admin({ username, email, password });
+    await newAdmin.save();
+    res.status(201).json(newAdmin);
+  } catch (error) {
+    res.status(500).json({ error: 'Internal Server Error' });
+  }
+});
 
 // Route to edit an admin
-// app.put('/admin/admins/:id', async (req, res) => {
-//   try {
-//     const { username, email, password } = req.body;
+app.put('/admin/admins/:id', async (req, res) => {
+  try {
+    const { username, email, password } = req.body;
 
-//     const updatedAdmin = await Admin.findByIdAndUpdate(
-//       req.params.id,
-//       { username, email, password },
-//       { new: true }
-//     );
+    const updatedAdmin = await Admin.findByIdAndUpdate(
+      req.params.id,
+      { username, email, password },
+      { new: true }
+    );
 
-//     if (!updatedAdmin) {
-//       return res.status(404).json({ error: 'Admin not found' });
-//     }
+    if (!updatedAdmin) {
+      return res.status(404).json({ error: 'Admin not found' });
+    }
 
-//     res.status(200).json(updatedAdmin);
-//   } catch (error) {
-//     console.error('Error editing admin:', error);
-//     res.status(500).json({ error: 'Internal Server Error' });
-//   }
-// });
+    res.status(200).json(updatedAdmin);
+  } catch (error) {
+    console.error('Error editing admin:', error);
+    res.status(500).json({ error: 'Internal Server Error' });
+  }
+});
 // Delete admin by ID
-// app.delete('/admin/admins/:id', async (req, res) => {
-//   const adminId = req.params.id;
+app.delete('/admin/admins/:id', async (req, res) => {
+  const adminId = req.params.id;
 
-//   try {
-//     await Admin.findByIdAndDelete(adminId);
-//     res.sendStatus(200);
-//   } catch (error) {
-//     res.status(500).json({ error: 'Internal Server Error' });
-//   }
-// });
+  try {
+    await Admin.findByIdAndDelete(adminId);
+    res.sendStatus(200);
+  } catch (error) {
+    res.status(500).json({ error: 'Internal Server Error' });
+  }
+});
 
 app.post('/register', async (req, res) => {
   const {username, password, referCode, email, mobileNumber} = req.body;
