@@ -5,7 +5,7 @@ const cors = require('cors');
 const jwt = require('jsonwebtoken');
 
 var corsOptions = {
-  origin: 'https://coin-bldf.vercel.app',
+  origin: 'https://coin-ecdw.vercel.app',
   optionsSuccessStatus: 200,
   credentials: true
 }
