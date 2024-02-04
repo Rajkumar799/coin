@@ -3,6 +3,7 @@ const app = express();
 const mongoose = require('mongoose');
 const cors = require('cors');
 const jwt = require('jsonwebtoken');
+const cron = require('node-cron');  // Add this line to include the 'node-cron' library
 
 var corsOptions = {
   origin: 'https://coin-ecdw.vercel.app',
@@ -91,14 +92,99 @@ const TransactionMethodSchema = new mongoose.Schema({
   usdtDetails: String,
   referralCommission: Number
 });
+const adminSchema = new mongoose.Schema({
+  username: String,
+  email: String,
+  password: String,
+});
 
+// Create Admin model
+const Admin = mongoose.model('Admin', adminSchema);
 const TransactionMethod = mongoose.model('TransactionMethod', TransactionMethodSchema);
 
 const UserTransaction = mongoose.model('Transaction', UserTransactionSchema);
 
 
 const User = mongoose.model('User', UserSchema);
+// Schedule the task to run every 20 seconds for testing
+// cron.schedule('*/20 * * * * *', async () => {
+//   try {
+//     console.log('Running task...');
+
+//     const transactionMethod = await TransactionMethod.findOne();
+
+//     if (transactionMethod) {
+//       const users = await User.find();
+
+//       users.forEach(async (user) => {
+//         const interest = (user.coins * transactionMethod.interestRate) / 100;
+//         user.coins += interest;
+//         await user.save();
+//       });
+
+//       console.log('Task completed successfully.');
+//     }
+//   } catch (error) {
+//     console.error('Error applying interest:', error);
+//   }
+// });
 // Registration route
+// Get all admins
+app.get('/admin/admins', async (req, res) => {
+  try {
+    const admins = await Admin.find();
+    res.json(admins);
+  } catch (error) {
+    res.status(500).json({ error: 'Internal Server Error' });
+  }
+});
+
+// Add new admin
+app.post('/admin/admins', async (req, res) => {
+  const { username, email, password } = req.body;
+
+  try {
+    const newAdmin = new Admin({ username, email, password });
+    await newAdmin.save();
+    res.status(201).json(newAdmin);
+  } catch (error) {
+    res.status(500).json({ error: 'Internal Server Error' });
+  }
+});
+
+// Route to edit an admin
+app.put('/admin/admins/:id', async (req, res) => {
+  try {
+    const { username, email, password } = req.body;
+
+    const updatedAdmin = await Admin.findByIdAndUpdate(
+      req.params.id,
+      { username, email, password },
+      { new: true }
+    );
+
+    if (!updatedAdmin) {
+      return res.status(404).json({ error: 'Admin not found' });
+    }
+
+    res.status(200).json(updatedAdmin);
+  } catch (error) {
+    console.error('Error editing admin:', error);
+    res.status(500).json({ error: 'Internal Server Error' });
+  }
+});
+// Delete admin by ID
+app.delete('/admin/admins/:id', async (req, res) => {
+  const adminId = req.params.id;
+
+  try {
+    await Admin.findByIdAndDelete(adminId);
+    res.sendStatus(200);
+  } catch (error) {
+    res.status(500).json({ error: 'Internal Server Error' });
+  }
+});
+
 app.post('/register', async (req, res) => {
   const {username, password, referCode, email, mobileNumber} = req.body;
 
@@ -112,12 +198,22 @@ app.post('/register', async (req, res) => {
   if (referCode) {
     const referrer = await User.findOne({referCode});
     if (referrer) {
+      const transactionMethod = await TransactionMethod.findOne();
+
+      // Check if transactionMethod is available
+      if (transactionMethod) {
+        // Calculate referral commission based on your logic (e.g., percentage of coins)
+        const referralCommission = (user.coins * transactionMethod.referralCommission) / 100;
+
+        // Update referrer's coins, referral commission, and referred users
+        referrer.coins += referralCommission;
+        referrer.referralCommission += referralCommission;
       // Add the new user to the referrer's referral system
       referrer.referrals.push(user._id);
       await referrer.save();
     }
   }
-
+  }
   res.send(user);
 });
 
